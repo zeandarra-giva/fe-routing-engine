@@ -1,16 +1,113 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230a2a7a%22/%3E%3Cpath d=%22M10 25h11a4.5 4.5 0 0 0 0-9H11a4.5 4.5 0 0 1 0-9h7%22 stroke=%22white%22 stroke-width=%222.5%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%2223%22 cy=%227%22 r=%224%22 fill=%22%23e0242e%22/%3E%3C/svg%3E" />
-    <title>Waze to Work</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230a2a7a%22/%3E%3Cpath d=%22M10 25h11a4.5 4.5 0 0 0 0-9H11a4.5 4.5 0 0 1 0-9h7%22 stroke=%22white%22 stroke-width=%222.5%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%2223%22 cy=%227%22 r=%224%22 fill=%22%23e0242e%22/%3E%3C/svg%3E" />
+  <title>Waze to Work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="app-top">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <!-- A route that ends at a red destination pin: requests finding their way to the right team. -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6" cy="19" r="2.5" stroke="#fff" stroke-width="2" />
+            <path d="M8.5 19h8a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H14" stroke="#fff" stroke-width="2" />
+            <circle cx="18" cy="5" r="3" fill="var(--red-500)" />
+          </svg>
+        </span>
+        <div class="brand-name">Waze <span>to</span> Work</div>
+      </div>
+
+      <div class="app-top-center">
+        <div class="last-updated" aria-live="off">
+          <span class="live-dot is-live" aria-hidden="true"></span>
+          <span class="lu-text" id="live-text"></span>
+        </div>
+      </div>
+
+      <div class="app-top-right">
+        <span id="refresh-slot" style="display: contents"></span>
+
+        <div class="account" data-pop-root="shortcuts">
+          <button class="btn btn-ghost btn-icon shortcuts-btn" data-pop="shortcuts" aria-haspopup="dialog"
+            aria-expanded="false" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+            <span data-icon="keyboard"></span>
+          </button>
+          <div class="account-card shortcuts-card" id="pop-shortcuts" role="dialog" aria-label="Keyboard shortcuts"
+            hidden></div>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" data-cmd="ingest-open"><span data-icon="mail"
+            data-size="sm"></span>Ingest email</button>
+
+        <div class="account" data-pop-root="account">
+          <button class="avatar account-btn" data-pop="account" aria-haspopup="dialog" aria-expanded="false"
+            aria-label="Account and team">AA</button>
+          <div class="account-card" id="pop-account" role="dialog" aria-label="Account and team" hidden></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-body">
+      <section class="kpi-band" id="kpi-band" aria-label="Today's overview"></section>
+
+      <div class="workspace" id="workspace">
+        <section class="list-col" aria-label="Tickets">
+          <div class="toolbar">
+            <div class="tabs" id="tabs" role="tablist" aria-label="Request views"></div>
+          </div>
+          <div class="list-tools">
+            <label class="search">
+              <span data-icon="search"></span>
+              <span class="sr-only">Search requests</span>
+              <input id="search" type="search" placeholder="Search tickets, people, queues…"
+                title="Search by ID, title, description, queue, resolver or analyst" />
+              <span class="kbd">/</span>
+            </label>
+            <div class="account" data-pop-root="filters">
+              <button class="btn filters-btn" id="filters-btn" data-pop="filters" aria-haspopup="dialog"
+                aria-expanded="false"></button>
+              <div class="account-card filters-card" id="pop-filters" role="dialog" aria-label="Filters" hidden></div>
+            </div>
+          </div>
+          <div class="list-meta" id="list-meta"></div>
+          <div class="list-scroll" id="list-scroll">
+            <div class="cards" id="cards"></div>
+          </div>
+        </section>
+
+        <div class="splitter" id="splitter" role="separator" aria-orientation="vertical"
+          aria-label="Resize ticket breakdown" tabindex="0" title="Drag to resize · double-click to reset">
+          <span class="splitter-line"></span>
+          <span class="splitter-grip" aria-hidden="true"></span>
+        </div>
+
+        <aside class="detail-col" id="detail" aria-label="Ticket breakdown"></aside>
+      </div>
+    </main>
+
+    <div id="modal-root"></div>
+    <div class="toast-region" id="toast" aria-live="polite"></div>
+  </div>
+
+  <!-- Plain scripts, loaded in order; opening this file directly in a browser works (no server or build). -->
+  <script defer src="js/html.js"></script>
+  <script defer src="js/icons.js"></script>
+  <script defer src="js/model.js"></script>
+  <script defer src="js/views.js"></script>
+  <script defer src="js/app.js"></script>
+</body>
+
 </html>
